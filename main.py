@@ -1,30 +1,30 @@
 # Import Modules
 import csv
 
-# Open dataset csv and store each row as object in array
+# Open dataset .csv and store each row as an object in array
 with open("owid-covid-data.csv", 'r') as dataset:
   # Array to hold all rows as objects as elements
   data_array = [] 
 
   reader = csv.DictReader(dataset)
-  for row in reader:
-    data_array.append(dict(row))
+  for line in reader:
+    data_array.append(dict(line))
 
-# Take informal metric command and return formal column name
+# Take informal metric command and return formal column name for query
 def translate_metric(metric):
-    # Defined commands informal:formal commands
+    # Defined commands informal:formal values
     metric_commands = {"deaths": "total_deaths", "cases": "total_cases", "positivity": "positivity_rate", "new": "new_cases"}
 
     return metric_commands.get(metric)
 
-# Format country input for either ISO code or standard country name
+# Format and prepare user input country value for validation and query
 def format_country(country_input):
   if len(country_input) == 3:
     return country_input.upper()
   else:
     return country_input.title()
 
-# Check to see if given input exists in dataset
+# Check to see if formatted input exists in dataset (country or metric)
 def validate_input(input_to_check, input_type):
   if len(input_to_check) >= 3:
     for data_object in data_array:
@@ -37,9 +37,10 @@ def validate_input(input_to_check, input_type):
 
 # ---------------------------------------------
 # Begin collection of input gathering functions
+# TODO: Replace with single function?
 def get_country():
   while True:
-    input_country = format_country(input("Country (ex: Honduras or HND, United States or USA): "))
+    input_country = format_country(input("Country (ex: Honduras or HND, United States or USA): ").strip().lower())
       
     if validate_input(input_country, "Country:"):
       return input_country
@@ -49,29 +50,40 @@ def get_country():
 
 def get_timeframe():
   while True:
-    input_timeframe = input("Timeframe (week, month, alltime): ").strip().lower()
+    input_timeframe = input("Timeframe (week, month, alltime)): ").strip().lower()
     
+    # TODO: Allow for custom timeframe (ex: Februrary 2020 - September 2020)
     if input_timeframe == "week" or input_timeframe == "month" or input_timeframe == "alltime":
       return input_timeframe
     else:
+      print("You have selected an invalid timeframe, please try again.")
       continue
 
 def get_metric():
   while True:
-    input_metric = input("Metric (deaths, cases, postivity or 'more' to see more options): ").strip().lower()
-    
+    input_metric = input("Metric (deaths, cases, postivity or 'list' to see more options): ").strip().lower()
+
     try:
-      input_metric = translate_metric(input_metric)
-
-      if validate_input(input_metric, "Metric:"):
-        return input_metric
+      # Check if user requested to see available metrics
+      if input_metric == "list":
+        print("--- Available Metrics --")
+        print("cases - total case count per day")
+        print("deaths - total death count per day")
+        print("new - new cases per day")
+        print("positivity - daily postitivity rate")
       else:
-        continue
+        # Call translate_metric and get formal column title from informal command
+        input_metric = translate_metric(input_metric)
+        
+        # Ensure metric exists in dataset
+        if validate_input(input_metric, "Metric:"):
+          return input_metric
+        else:
+          continue
     except:
-      print("You have selected an invalid metric, please try again.")
-
+      print("Your chosen metric does not appear in the dataset, please try again. Alternatively, type 'list' to see a list of available metrics.")
     
-# End collection of input gathing functions
+# End collection of input gathering functions
 # -----------------------------------------
 
 def general_error():
@@ -89,15 +101,13 @@ def build_query():
   search_metric = get_metric()
 
   print("You have selected the following parameters:", "\nCountry:", search_country, "\nTimeframe:", search_timeframe, "\nMetric:", search_metric)
-  # print(input_timeframe)
-  # print(input_metric)
 
 
 def main():
   print("COVID-19 Stats")
   print("----------------------------")
-  # Begin collection of inputs
   # TODO: Take response and pass it to search/query function
+  # Get inputs and build query 
   build_query()
 
 
