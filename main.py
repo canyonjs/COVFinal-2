@@ -2,13 +2,17 @@
 import csv
 
 # Open dataset .csv and store each row as an object in array
-with open("owid-covid-data.csv", 'r') as dataset:
-  # Array to hold all rows as objects as elements
-  data_array = [] 
+try:
+  with open("owid-covid-data.csv", 'r') as dataset:
+    # Array to hold all rows as objects as elements
+    data_array = [] 
 
-  reader = csv.DictReader(dataset)
-  for line in reader:
-    data_array.append(dict(line))
+    reader = csv.DictReader(dataset)
+    for line in reader:
+      data_array.append(dict(line))
+except FileNotFoundError:
+  print("Dataset is missing. Check your working directory.")
+
 
 # Take informal metric command and return formal column name for query
 def translate_metric(metric):
