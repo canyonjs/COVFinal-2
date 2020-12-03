@@ -24,10 +24,7 @@ def validate_input(input_to_check):
   if len(input_to_check) == 3:
     for data_object in data_array:
       for key, val in data_object.items():
-        print(input_to_check)
-        print(key)
-        print(val)
-        if val == input_to_check or key == input_to_check:
+        if val == input_to_check:
           print("Found input value in dataset")
           return True
   else:
@@ -61,11 +58,13 @@ def get_query_input():
     else:
       continue
   
+  # TODO: FIX THIS, Broken Validation, Never returns TRUE
   while True:
     input_metric = input("Metric (ex: deaths, cases, postivity) or 'more' to see more options: ").strip().lower()
     
     input_metric = metric_values.get(input_metric)
     print(input_metric)
+    print("start validate")
 
     if validate_input(input_metric):
       break
