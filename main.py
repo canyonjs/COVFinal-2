@@ -13,12 +13,12 @@ def fetch_dataset():
   os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv")
   os.system("clear")
 
-  # Check to see if the file downloaded, otherwise return backup copy
+  # Check to see if the file downloaded, otherwise return backup copy (likely unrelable)
   if os.path.exists(owid_dataset):
     print("Success!")
   else:
     print("There was an issue fetching the latest dataset. Check your internet connection.")
-    # return backup flag
+    # TODO: return backup flag
 
 def data_freshness():
   # Get current date and format string
@@ -153,6 +153,7 @@ def main():
   # Print header text
   print("COVID-19 Stats")
   print("----------------------------")
+  # TODO: Display timestamp of loaded dataset
 
   # Get inputs and build query 
   build_query()
