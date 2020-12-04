@@ -1,0 +1,6 @@
+https://www.programiz.com/python-programming/reading-csv-files
+https://www.pair.com/support/kb/paircloud-downloading-files-with-wget/
+https://stackabuse.com/executing-shell-commands-with-python/
+https://www.programiz.com/python-programming/datetime/strftime
+https://www.guru99.com/python-check-if-file-exists.html
+https://www.toptal.com/python/python-class-attributes-an-overly-thorough-guide

@@ -1,17 +1,56 @@
 # Import Modules
 import csv
+import os
+from datetime import datetime
 
-# Open dataset .csv and store each row as an object in array
-try:
-  with open("owid-covid-data.csv", 'r') as dataset:
+# TODO: Deal with this global variable.
+owid_dataset = "owid-covid-data.csv"
+
+# TODO: Move fetch/fresh into its own .py
+# Downloads dataset and clears terminal, uncaught. (Maybe use subprocess to catch timeouts)
+def fetch_dataset():
+  os.system("echo Fetching latest dataset...")
+  os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv")
+  os.system("clear")
+
+  # Check to see if the file downloaded, otherwise return backup copy
+  if os.path.exists(owid_dataset):
+    print("Success!")
+  else:
+    print("There was an issue fetching the latest dataset. Check your internet connection.")
+    # return backup flag
+
+def data_freshness():
+  # Get current date and format string
+  date_today = datetime.now()
+  current_date = date_today.strftime("%m/%d/%Y")
+
+  # Check to see if dataset exists and it is current
+  try:
+    # Get creation date of owid csv file and format string
+    csv_datetime = datetime.fromtimestamp(os.path.getctime(owid_dataset))
+    csv_date = csv_datetime.strftime("%m/%d/%Y")
+
+    # Check to see if dataset exists and is up to date, otherwise fetch it
+    if csv_date == current_date:
+      return csv_date
+    else:
+      print("Dataset is outdated.")
+      fetch_dataset()
+  except FileNotFoundError:
+    print("Dataset not found.")
+    fetch_dataset()
+
+
+# Open dataset .csv and store each row as a dict in array
+def parse_dataset():
+  with open(owid_dataset, 'r') as dataset:
     # Array to hold all rows as objects as elements
-    data_array = [] 
-
+    data_array = []
     reader = csv.DictReader(dataset)
     for line in reader:
       data_array.append(dict(line))
-except FileNotFoundError:
-  print("Dataset is missing. Check your working directory.")
+    return data_array
 
 
 # Take informal metric command and return formal column name for query
@@ -31,7 +70,7 @@ def format_country(country_input):
 # Check to see if formatted input exists in dataset (country or metric)
 def validate_input(input_to_check, input_type):
   if len(input_to_check) >= 3:
-    for data_object in data_array:
+    for data_object in main.data_array:
       for key, val in data_object.items():
         if val == input_to_check or key == input_to_check:
           print(input_type, input_to_check)
@@ -90,9 +129,6 @@ def get_metric():
 # End collection of input gathering functions
 # -----------------------------------------
 
-def general_error():
-  print("Sorry, I didn't understand that command. Please try again.")
-
 def build_query():
   # Gets user input for country, data and timeframe parameters
   print("Please enter the country, metric and timeframe for your query.")
@@ -108,11 +144,20 @@ def build_query():
 
 
 def main():
+  # Check dataset for relevancy
+  data_freshness()
+
+  # Parse dataset and store in main class attribute for global access
+  main.data_array = parse_dataset()
+
+  # Print header text
   print("COVID-19 Stats")
   print("----------------------------")
-  # TODO: Take response and pass it to search/query function
+
   # Get inputs and build query 
   build_query()
+
+  # TODO: Take response and pass it to search/query function
 
 
 if __name__ == '__main__':
