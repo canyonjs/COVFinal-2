@@ -15,9 +15,15 @@ def fetch_dataset(datafile):
   if os.path.exists(datafile):
     print("Success!")
     os.system("clear")
+
+    # Pass new file back to data_freshness for verification & timestamp output
+    data_freshness(datafile)
+
     return datafile
   else:
-    print("There was an issue fetching the latest dataset. The application will use an older copy from 12/4/2020. Check your internet connection.")
+    # TODO: Make backup file most recent if possible, instead of fixed 12/4
+    print("There was an issue fetching the latest dataset. Check your internet connection. In the meantime the script will use an older, fallback dataset.")
+    print("Dataset last modified: 12/04/2020")
     return fallback_dataset
 
 def data_freshness(file_to_check):
@@ -27,12 +33,9 @@ def data_freshness(file_to_check):
 
   # Check to see if dataset exists and it is current
   try:
-    # Get creation date of csv file and format string
-    csv_datetime = datetime.fromtimestamp(os.path.getctime(file_to_check))
-    csv_date = csv_datetime.strftime("%m/%d/%Y")
-
     # Check to see if dataset exists and is up to date, attempt fetch
-    if csv_date == current_date:
+    if data_timestamp(file_to_check) == current_date:
+      print("Dataset last modified:", current_date)
       return file_to_check
     else:
       print("Dataset is outdated.")
@@ -40,3 +43,11 @@ def data_freshness(file_to_check):
   except FileNotFoundError:
     print("Dataset not found.")
     return fetch_dataset(file_to_check)
+
+
+def data_timestamp(file_to_timestamp):
+    # Get creation date of csv file and format string
+    csv_datetime = datetime.fromtimestamp(os.path.getctime(file_to_timestamp))
+    csv_date = csv_datetime.strftime("%m/%d/%Y")
+
+    return csv_date

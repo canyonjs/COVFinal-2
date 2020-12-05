@@ -1,15 +1,13 @@
 # Import Modules
 import csv
 import update_dataset
+import aesthetic_ascii
 
 """
 TODO: 
 Possibly shift validation and input handling into it's own file
 Leave parse_dataset here
-Create neat terminal heading
-Display data of working datafile to user
 """
-
 
 # Open dataset .csv and store each row as a dict in array
 def parse_dataset(datafile):
@@ -121,9 +119,8 @@ def main():
   # Parse dataset and store in main class attribute for global access
   main.data_array = parse_dataset(working_file)
 
-  # Print header text
-  print("COVID-19 Stats")
-  print("----------------------------")
+  # Print header text and line breaks
+  aesthetic_ascii.generate_header()
   # TODO: Display timestamp of loaded dataset
 
   # Get inputs and build query 
