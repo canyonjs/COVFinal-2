@@ -1,14 +1,14 @@
 # Creates ASCII heading
-def head_linebreak():
+def generate_hzrule(num):
   line_break = ""
   line_break_char = "-"
-  for i in range(85):
+  for i in range(num):
     line_break = line_break + line_break_char
   return line_break
 
 
 def generate_header():
   ascii_art = open("ascii_header.txt", "r")
-  print(head_linebreak())
+  print(generate_hzrule(85))
   print(ascii_art.read())
-  print(head_linebreak())
+  print(generate_hzrule(85))
