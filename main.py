@@ -1,50 +1,19 @@
 # Import Modules
 import csv
-import os
-from datetime import datetime
+import update_dataset
 
-# TODO: Deal with this global variable.
-owid_dataset = "owid-covid-data.csv"
-
-# TODO: Move fetch/fresh into its own .py
-# Downloads dataset and clears terminal, uncaught. (Maybe use subprocess to catch timeouts)
-def fetch_dataset():
-  os.system("echo Fetching latest dataset...")
-  os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv")
-  os.system("clear")
-
-  # Check to see if the file downloaded, otherwise return backup copy (likely unrelable)
-  if os.path.exists(owid_dataset):
-    print("Success!")
-  else:
-    print("There was an issue fetching the latest dataset. Check your internet connection.")
-    # TODO: return backup flag
-
-def data_freshness():
-  # Get current date and format string
-  date_today = datetime.now()
-  current_date = date_today.strftime("%m/%d/%Y")
-
-  # Check to see if dataset exists and it is current
-  try:
-    # Get creation date of owid csv file and format string
-    csv_datetime = datetime.fromtimestamp(os.path.getctime(owid_dataset))
-    csv_date = csv_datetime.strftime("%m/%d/%Y")
-
-    # Check to see if dataset exists and is up to date, otherwise fetch it
-    if csv_date == current_date:
-      return csv_date
-    else:
-      print("Dataset is outdated.")
-      fetch_dataset()
-  except FileNotFoundError:
-    print("Dataset not found.")
-    fetch_dataset()
+"""
+TODO: 
+Possibly shift validation and input handling into it's own file
+Leave parse_dataset here
+Create neat terminal heading
+Display data of working datafile to user
+"""
 
 
 # Open dataset .csv and store each row as a dict in array
-def parse_dataset():
-  with open(owid_dataset, 'r') as dataset:
+def parse_dataset(datafile):
+  with open(datafile, 'r') as dataset:
     # Array to hold all rows as objects as elements
     data_array = []
     reader = csv.DictReader(dataset)
@@ -67,7 +36,7 @@ def format_country(country_input):
   else:
     return country_input.title()
 
-# Check to see if formatted input exists in dataset (country or metric)
+# Check to see if formatted country or metric input exists in dataset
 def validate_input(input_to_check, input_type):
   if len(input_to_check) >= 3:
     for data_object in main.data_array:
@@ -144,11 +113,13 @@ def build_query():
 
 
 def main():
-  # Check dataset for relevancy
-  data_freshness()
+  # Dataset primary filename
+  owid_dataset = "owid-covid-data.csv"
+  # Ensure we are working with latest data, attempt to update if necessary
+  working_file = update_dataset.data_freshness(owid_dataset)
 
   # Parse dataset and store in main class attribute for global access
-  main.data_array = parse_dataset()
+  main.data_array = parse_dataset(working_file)
 
   # Print header text
   print("COVID-19 Stats")
