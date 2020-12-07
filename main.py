@@ -1,7 +1,7 @@
 # Import Modules
 import csv
 import update_dataset
-import aesthetic_output
+import aesthetic_header
 import input_handler
 
 # Open dataset .csv and store each row as a dict in array
@@ -23,7 +23,7 @@ def build_query():
   search_terms.append(input_handler.get_timeframe())
   search_terms.append(input_handler.get_metric(main.data_array))
 
-  print(aesthetic_output.generate_hzrule(45))
+  print(aesthetic_header.generate_hzrule(45))
 
   print("You have selected the following parameters:", "\nCountry:", search_terms[0], "\nTimeframe:", search_terms[1], "\nMetric:", search_terms[2])
 
@@ -54,7 +54,7 @@ def main():
   main.data_array = parse_dataset(working_file)
 
   # Print header text and line breaks
-  aesthetic_output.generate_header()
+  aesthetic_header.generate_header()
 
   # Get inputs, validate and build query 
   search_strings = build_query()
