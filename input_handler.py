@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Take informal metric command and return formal column name for query
 def translate_metric(metric):
@@ -47,49 +47,33 @@ def get_timeframe():
     input_timeframe = input("Timeframe (today, week, month, alltime): ").strip().lower()
     
     # TODO: Allow for custom timeframe (ex: Februrary 2020 - September 2020)
-    if input_timeframe == "week" or input_timeframe == "month" or input_timeframe == "alltime" or input_timeframe == "today":
+    if input_timeframe == "week":
+      return collect_timeframe_values(input_timeframe, 7)
+    elif input_timeframe == "month":
+      return collect_timeframe_values(input_timeframe, 30)
+    elif input_timeframe == "alltime":
+    # FIXME: Abitrary limit of 1yr
+      return collect_timeframe_values(input_timeframe, 365)
+    elif input_timeframe == "today":
       # Going to end up returning the list from collect tf function
-      return collect_timeframe_values(input_timeframe)
+      return collect_timeframe_values(input_timeframe, 0)
     else:
       print("You have selected an invalid timeframe, please try again.")
       continue
 
-def collect_timeframe_values(selected_timeframe):
+def collect_timeframe_values(selected_timeframe, num_of_days):
+  timeframe_values = []
   # Get current date and format string
   # form 2020-01-30
   date_today = datetime.now()
   current_date = date_today.strftime("%Y-%m-%d")
-  print(current_date)
-  return selected_timeframe
+
+  # return selected_timeframe
   
-  week_values = []
-  month_values = []
-  day_values = []
-  alltime_values = []
-  
-  # Build list of dates counting back from today
-  # This is insanity, use timedelta!
-
-  # if selected_timeframe == "week":
-  #   week_values.append(current_date)
-  #   slice_day = int(week_values[0][8:])
-  #   slice_month = int(week_values[0][5:7])
-  #   slice_year = int(week_values[0][0:4])
-
-  #   print(slice_day)
-  #   print(slice_month)
-  #   print(slice_year)
-
-  #   for i in range(6):
-  #     slice_day = slice_day -1
-  #     print(str(slice_year) + "-" + str(slice_month) + "-" + str(slice_day))
-
-  # elif selected_timeframe == "month":
-  #   print("MONTH LIST")
-  # elif selected_timeframe == "today":
-  #   print("today")
-  # else:
-  #   print("alltime")
+  past_date = date_today - timedelta(days = num_of_days)
+  past_date = past_date.strftime("%Y-%m-%d")
+  print(past_date, "-", current_date)
+  return 111
 
 def get_metric(metric_verify):
   while True:
