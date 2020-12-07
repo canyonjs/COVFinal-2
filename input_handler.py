@@ -14,6 +14,7 @@ def format_country(country_input):
   else:
     return country_input.title()
 
+
 # Check to see if formatted country or metric input exists in dataset
 def validate_input(input_to_check, input_type, working_dict):
   if len(input_to_check) >= 3:

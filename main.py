@@ -7,13 +7,35 @@ import input_handler
 # Open dataset .csv and store each row as a dict in array
 def parse_dataset(datafile):
   with open(datafile, 'r') as dataset:
+    # Return data_array, and valid lists of metrics and ISO/Countries
+    master_array = []
     # Array to hold all rows as objects as elements
     temp_data_array = []
+
+    # Collect valid countries and metrics 
+    dataset_countries = []
+    dataset_metrics = []
+
     reader = csv.DictReader(dataset)
     for line in reader:
-      temp_data_array.append(dict(line))
-    return temp_data_array
+      temp_line = dict(line)
+      temp_data_array.append(temp_line)
 
+      if temp_line.get("location") not in dataset_countries:
+        dataset_countries.append(temp_line.get("location"))
+      if temp_line.get("iso_code") not in dataset_countries:
+        dataset_countries.append(temp_line.get("iso_code"))
+      for o, p in temp_data_array[0].items():
+        if o not in dataset_metrics:
+          dataset_metrics.append(o)
+
+    master_array.append(temp_data_array)
+    master_array.append(dataset_countries)
+    master_array.append(dataset_metrics)
+
+    return master_array
+
+  
 def build_query():
   # Gets user input for country, data and timeframe parameters
   print("Please enter the country, metric and timeframe for your query.")
@@ -58,16 +80,22 @@ def create_subset(query_parameters):
         selected_items.append(z)
 
   return selected_items
-
-
+"""
+TODO: Create list of countries and ISO codes to be used for country/ISO input validation, too slow to search every key/val of every dict in main working_dict
+"""
 def main():
   # Dataset primary filename and location
   owid_dataset = "data/owid-covid-data.csv"
+
   # Ensure we are working with latest data, attempt to update if necessary
   working_file = update_dataset.data_freshness(owid_dataset)
 
   # Parse dataset and store in main class attribute for global access [INCL ALL ROWS]
-  main.data_array = parse_dataset(working_file)
+  triple_list = parse_dataset(working_file)
+  main.data_array = triple_list[0]
+  # Build sublist to be used for input validation later
+  main.valid_countries = triple_list[1]
+  main.valid_metrics = triple_list[2]
 
   # Print header text and line breaks
   aesthetic_header.generate_header()
@@ -75,7 +103,7 @@ def main():
   # Get inputs, validate and build strings for query 
   search_strings = build_query()
 
-  # Selected array, use search_string to collect only those elements which match country & timeframe criteria
+  # create a subset of only those elements which match user criteria
   main.selected_list = create_subset(search_strings)
   print(main.selected_list)
 
