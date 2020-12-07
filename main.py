@@ -45,8 +45,8 @@ def do_query(query_parameters):
 
 
 def main():
-  # Dataset primary filename
-  owid_dataset = "owid-covid-data.csv"
+  # Dataset primary filename and location
+  owid_dataset = "data/owid-covid-data.csv"
   # Ensure we are working with latest data, attempt to update if necessary
   working_file = update_dataset.data_freshness(owid_dataset)
 

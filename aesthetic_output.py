@@ -8,7 +8,7 @@ def generate_hzrule(num):
 
 
 def generate_header():
-  ascii_art = open("ascii_header.txt", "r")
+  ascii_art = open("assets/ascii_header.txt", "r")
   print(generate_hzrule(85))
   print(ascii_art.read())
   print(generate_hzrule(85))

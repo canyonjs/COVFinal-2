@@ -2,9 +2,9 @@ import os
 from datetime import datetime
 
 # Downloads dataset and clears terminal
-def fetch_dataset(datafile, ctime):
+def fetch_dataset(datafile, data_ctime):
   # Set fallback incase fetch fails
-  fallback_dataset = "old_owid-covid-data.csv"
+  fallback_dataset = "data/old_owid-covid-data.csv"
 
   """ 
   Use os.system, wget to fetch file 
@@ -12,7 +12,7 @@ def fetch_dataset(datafile, ctime):
   """
 
   os.system("echo Fetching latest dataset...")
-  os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv")
+  os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv -O data/owid-covid-data.csv")
   os.system("clear")
 
   # Check to see if the file downloaded, otherwise return backup copy (likely unreliable, no exception raised on failure. Try using subprocess)
@@ -24,8 +24,8 @@ def fetch_dataset(datafile, ctime):
     data_freshness(datafile)
     return datafile
   elif os.path.exists(fallback_dataset):
-    print("There was an issue fetching the latest dataset. Check your internet connection. In the meantime the script will use an older, fallback dataset.")
-    print("Dataset last modified:", ctime)
+    print("There was an issue fetching the latest dataset. Check your internet connection. In the meantime the script will use a fallback dataset.")
+    print("Dataset last modified:", data_ctime)
     return fallback_dataset
   else:
     print("Sorry, there was an issue downloading the dataset and there does not appear to be a backup dataset to access. Try adding the dataset manually by placing the .csv file in the working folder, then relaunch the script.")
@@ -35,20 +35,18 @@ def data_freshness(file_to_check):
   # Get current date and format string
   date_today = datetime.now()
   current_date = date_today.strftime("%m/%d/%Y")
-
-  # Check to see if dataset exists, is current, otherwise fetch
   try:
-    # Check to see if dataset exists and is up to date, attempt fetch
-    if data_timestamp(file_to_check) == current_date:
+    # Check to see if dataset exists and is up to date
+    if os.path.exists(file_to_check) and data_timestamp(file_to_check) == current_date:
       print("Dataset last modified:", current_date)
       return file_to_check
     else:
       """
-      If dataset is present but outdated, collect creation date of that file, rename it old_* (incase we need to fallback after fetch attempt)
+      If dataset is present and outdated, collect creation date of that file, rename it old_* (incase we need to fallback after fetch attempt)
       """
-      print("Dataset is outdated.")
       original_dataset = data_timestamp(file_to_check)
-      os.replace(file_to_check, "old_owid-covid-data.csv")
+      print("Dataset is outdated.")
+      os.replace(file_to_check, "data/old_owid-covid-data.csv")
       return fetch_dataset(file_to_check, original_dataset)
   except FileNotFoundError:
     # If there is no dataset or fallback dataset, fetch one.

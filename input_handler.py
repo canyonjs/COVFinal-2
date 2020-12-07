@@ -26,7 +26,7 @@ def validate_input(input_to_check, input_type, working_dict):
 # TODO: Consider consildation
 def get_country(country_verify):
   while True:
-    input_country = format_country(input("Country (ex: Honduras or HND, United States or USA): ").strip().lower())
+    input_country = format_country(input("Country/ISO-CODE (ex: Honduras or HND, United States or USA): ").strip().lower())
       
     if validate_input(input_country, "Country:", country_verify):
       return input_country
