@@ -18,21 +18,27 @@ def validate_input(input_to_check, input_type, working_dict):
     for data_object in working_dict:
       for key, val in data_object.items():
         if val == input_to_check or key == input_to_check:
-          # print(input_type, input_to_check)
+          if input_type == "Country:":
+            # In the case of country, we're going to need the key for later query
+            key_cat_input = key, input_to_check
+            return key_cat_input
           return True
-  elif len(input_to_check) < 3:
-    print("Enter at least three characters.")
+  else:
+    return False
 
-# TODO: Consider consildation
+# TODO: Consider consolidation
 def get_country(country_verify):
   while True:
-    input_country = format_country(input("Country/ISO-CODE (ex: Honduras or HND, United States or USA): ").strip().lower())
-      
-    if validate_input(input_country, "Country:", country_verify):
-      return input_country
-    else:
+    input_country = format_country(input("Country/ISO CODE (ex: Honduras or HND, United States or USA): ").strip().lower())
+
+    if len(input_country) < 3:
+      print("Enter at least three characters")
+      continue
+    elif not validate_input(input_country, "Country:", country_verify):
       print("Sorry,", input_country, "was not found. Please try again.")
       continue
+    else:
+      return validate_input(input_country, "Country:", country_verify)
 
 def get_timeframe():
   while True:
