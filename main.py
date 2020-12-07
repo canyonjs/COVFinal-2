@@ -30,9 +30,9 @@ def build_query():
   return search_terms
 
 def do_query(query_parameters):
-  # print(query_parameters[0])
-  # print(query_parameters[1])
-  # print(query_parameters[2])
+  print(query_parameters[0])
+  print(query_parameters[1])
+  print(query_parameters[2])
   print("Begin query")
 
 

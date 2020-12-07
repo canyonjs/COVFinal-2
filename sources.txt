@@ -4,3 +4,5 @@ https://stackabuse.com/executing-shell-commands-with-python/
 https://www.programiz.com/python-programming/datetime/strftime
 https://www.guru99.com/python-check-if-file-exists.html
 https://www.toptal.com/python/python-class-attributes-an-overly-thorough-guide
+https://patorjk.com/software/taag/
+https://docs.python.org/3/library/os.html#os.replace
