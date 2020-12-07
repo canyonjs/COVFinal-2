@@ -29,11 +29,11 @@ def build_query():
 
   return search_terms
 
-def do_query(query_parameters):
-  print(query_parameters[0])
-  print(query_parameters[1])
-  print(query_parameters[2])
-  print("Begin query")
+def create_subset(query_parameters):
+  # print(query_parameters[0])
+  # print(query_parameters[1])
+  # print(query_parameters[2])
+  print("Gathering relevant collections of data...")
   """
   Search dataset for query parameters
   1) a) Convert map input value to key in the case of country, ex: "HND" : ISO_CODE, "Honduras": "Country" and store key
@@ -41,21 +41,23 @@ def do_query(query_parameters):
   2) Convert timeframe input into list of dates backward from current day (ex: map week: [12/01/2020, 12/02/2020,...etc]) save for later user
   3) a) convert metric to formal column title (done)
   b) Perform search of list created in #1, ex: where country/iso = USA and dateofrow = [date in timeframe list], capture numerical value for metric and store in array for output or summation
-  """
-  # TODO: Handle timeframe and create list of dates matching date form in dataset
-  # Maybe do that in input handler before we get here.
+  """  
+  # Build list of dicts as element where country/ISO matches
+  country_entries = []
 
-  
-  # 1 a)
-  sub_list = []
+  for data_element in main.data_array:
+    if data_element.get(query_parameters[0][0]) == query_parameters[0][1]:
+      country_entries.append(data_element)
 
-  # If it is the country AND it's one of our requested timeframe datapoints
+  # Review country_entries take only those elements which satisfy our timeframe
+  selected_items = []
 
-  # for data_element in main.data_array:
-  #   if data_element.get(query_parameters[0][0]) == query_parameters[0][1]:
-  #     print(query_parameters[0][0])
-  #     print(query_parameters[0][1])
+  for z in country_entries:
+    for requested_date in query_parameters[1]:
+      if z.get("date") == requested_date:
+        selected_items.append(z)
 
+  return selected_items
 
 
 def main():
@@ -64,17 +66,18 @@ def main():
   # Ensure we are working with latest data, attempt to update if necessary
   working_file = update_dataset.data_freshness(owid_dataset)
 
-  # Parse dataset and store in main class attribute for global access
+  # Parse dataset and store in main class attribute for global access [INCL ALL ROWS]
   main.data_array = parse_dataset(working_file)
 
   # Print header text and line breaks
   aesthetic_header.generate_header()
 
-  # Get inputs, validate and build query 
+  # Get inputs, validate and build strings for query 
   search_strings = build_query()
 
-  # Take response and pass it to search/query function
-  do_query(search_strings)
+  # Selected array, use search_string to collect only those elements which match country & timeframe criteria
+  main.selected_list = create_subset(search_strings)
+  print(main.selected_list)
 
 if __name__ == '__main__':
   main()

@@ -31,7 +31,7 @@ def validate_input(input_to_check, input_type, working_dict):
 # TODO: Consider consolidation
 def get_country(country_verify):
   while True:
-    input_country = format_country(input("Country/ISO CODE (ex: Honduras or HND, United States or USA): ").strip().lower())
+    input_country = format_country(input("Country/ISO CODE (ex: Honduras/HND, United States/USA): ").strip().lower())
 
     if len(input_country) < 3:
       print("Enter at least three characters")
@@ -44,36 +44,52 @@ def get_country(country_verify):
 
 def get_timeframe():
   while True:
-    input_timeframe = input("Timeframe (today, week, month, alltime): ").strip().lower()
+    input_timeframe = input("Timeframe (today, week, month, year or alltime): ").strip().lower()
     
     # TODO: Allow for custom timeframe (ex: Februrary 2020 - September 2020)
     if input_timeframe == "week":
       return collect_timeframe_values(input_timeframe, 7)
     elif input_timeframe == "month":
       return collect_timeframe_values(input_timeframe, 30)
-    elif input_timeframe == "alltime":
+    elif input_timeframe == "year":
     # FIXME: Abitrary limit of 1yr
       return collect_timeframe_values(input_timeframe, 365)
     elif input_timeframe == "today":
       # Going to end up returning the list from collect tf function
       return collect_timeframe_values(input_timeframe, 0)
+    elif input_timeframe == "alltime":
+      print("Alltime graph is currently disabled, choose another option.")
+      continue
+      # return collect_timeframe_values(input_timeframe, -1)
     else:
       print("You have selected an invalid timeframe, please try again.")
       continue
 
 def collect_timeframe_values(selected_timeframe, num_of_days):
+  # Create list of days spanning back the requested timeframe
+
   timeframe_values = []
   # Get current date and format string
   # form 2020-01-30
   date_today = datetime.now()
   current_date = date_today.strftime("%Y-%m-%d")
 
+  starting_date = date_today
+
   # return selected_timeframe
+  if num_of_days == -1:
+    print("Error")
+    # first_date = date(2020, 1, 1)
+    # delta_date = starting_date - first_date
+  else:
+    ending_date = starting_date - timedelta(days = num_of_days)
+    delta_date = starting_date - ending_date
+
+  for i in range(delta_date.days + 1):
+    day = ending_date + timedelta(days = i)
+    timeframe_values.append(day.strftime("%Y-%m-%d"))
   
-  past_date = date_today - timedelta(days = num_of_days)
-  past_date = past_date.strftime("%Y-%m-%d")
-  print(past_date, "-", current_date)
-  return 111
+  return timeframe_values
 
 def get_metric(metric_verify):
   while True:
