@@ -23,9 +23,7 @@ def validate_input(input_to_check, input_type, working_dict):
   elif len(input_to_check) < 3:
     print("Enter at least three characters.")
 
-# ---------------------------------------------
-# Begin collection of input gathering functions
-# TODO: Replace with single function?
+# TODO: Consider consildation
 def get_country(country_verify):
   while True:
     input_country = format_country(input("Country (ex: Honduras or HND, United States or USA): ").strip().lower())
@@ -70,6 +68,3 @@ def get_metric(metric_verify):
           continue
     except:
       print("Your chosen metric does not appear in the dataset, please try again. Alternatively, type 'list' to see a list of available metrics.")
-    
-# End collection of input gathering functions
-# -----------------------------------------

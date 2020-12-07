@@ -34,6 +34,14 @@ def do_query(query_parameters):
   print(query_parameters[1])
   print(query_parameters[2])
   print("Begin query")
+  """
+  Search dataset for query parameters
+  1) a) Convert map input value to key in the case of country, ex: "HND" : ISO_CODE, "Honduras": "Country" and store key
+  b) Use dict.get() for all rows matching that country/iso key, collect them into list of dicts
+  2) Convert timeframe input into list of dates backward from current day (ex: map week: [12/01/2020, 12/02/2020,...etc]) save for later user
+  3) a) convert metric to formal column title (done)
+  b) Perform search of list created in #1, ex: where country/iso = USA and dateofrow = [date in timeframe list], capture numerical value for metric and store in array for output or summation
+  """
 
 
 def main():
