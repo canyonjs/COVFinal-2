@@ -42,6 +42,20 @@ def do_query(query_parameters):
   3) a) convert metric to formal column title (done)
   b) Perform search of list created in #1, ex: where country/iso = USA and dateofrow = [date in timeframe list], capture numerical value for metric and store in array for output or summation
   """
+  # TODO: Handle timeframe and create list of dates matching date form in dataset
+  # Maybe do that in input handler before we get here.
+
+  
+  # 1 a)
+  sub_list = []
+
+  # If it is the country AND it's one of our requested timeframe datapoints
+
+  # for data_element in main.data_array:
+  #   if data_element.get(query_parameters[0][0]) == query_parameters[0][1]:
+  #     print(query_parameters[0][0])
+  #     print(query_parameters[0][1])
+
 
 
 def main():
