@@ -44,7 +44,7 @@ def get_country(country_verify):
 
 def get_timeframe():
   while True:
-    input_timeframe = input("Timeframe (today, week, month, year or alltime): ").strip().lower()
+    input_timeframe = input("Timeframe (day, week, month, year or alltime): ").strip().lower()
     
     # TODO: Allow for custom timeframe (ex: Februrary 2020 - September 2020)
     if input_timeframe == "week":
@@ -52,12 +52,11 @@ def get_timeframe():
     elif input_timeframe == "month":
       return collect_timeframe_values(input_timeframe, 30)
     elif input_timeframe == "year":
-    # FIXME: Abitrary limit of 1yr
       return collect_timeframe_values(input_timeframe, 365)
-    elif input_timeframe == "today":
-      # Going to end up returning the list from collect tf function
+    elif input_timeframe == "day":
       return collect_timeframe_values(input_timeframe, 0)
     elif input_timeframe == "alltime":
+      # FIXME: Alltime is broken, not currently necessary, data set tracks sub 1yr.
       print("Alltime graph is currently disabled, choose another option.")
       continue
       # return collect_timeframe_values(input_timeframe, -1)
@@ -75,6 +74,7 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
   current_date = date_today.strftime("%Y-%m-%d")
 
   starting_date = date_today
+  print(current_date)
 
   # return selected_timeframe
   if num_of_days == -1:
@@ -84,10 +84,13 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
   else:
     ending_date = starting_date - timedelta(days = num_of_days)
     delta_date = starting_date - ending_date
-
-  for i in range(delta_date.days + 1):
-    day = ending_date + timedelta(days = i)
-    timeframe_values.append(day.strftime("%Y-%m-%d"))
+  if num_of_days > 1:
+    for i in range(delta_date.days):
+      day = ending_date + timedelta(days = i)
+      timeframe_values.append(day.strftime("%Y-%m-%d"))
+  else:
+    yesterday_date = starting_date - timedelta(days = 1)
+    timeframe_values.append(yesterday_date.strftime("%Y-%m-%d"))
   
   return timeframe_values
 
