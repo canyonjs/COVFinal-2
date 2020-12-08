@@ -65,7 +65,18 @@ def create_subset(query_parameters):
       if z.get("date") == requested_date:
         selected_items.append(z)
   return selected_items
-  
+
+# TODO: Datapoint collection and graph generation
+def run_query(search_list):
+  # Perform search of selected_list using search_strings found in main
+  print("Running search for datapoints...")
+
+def generate_graph():
+  # MATPLOTLIB HERE with datapoints from run_query
+  print("Generating and outputting graph")
+# -------------------------------------------------------------------------
+
+
 def build_query():
   # Gets user input for country, data and timeframe parameters
   print("Please enter the country, metric and timeframe for your query.")
@@ -113,7 +124,9 @@ def main():
 
   # create a subset of only those elements which match user criteria
   main.selected_list = create_subset(search_strings)
-  print(main.selected_list)
+
+  # run query with selected list
+  run_query(main.selected_list)
 
 if __name__ == '__main__':
   main()

@@ -1,12 +1,5 @@
 from datetime import datetime, timedelta
 
-# Take informal metric command and return formal column name for query
-def translate_metric(metric):
-    # Defined commands informal:formal values
-    metric_commands = {"deaths": "total_deaths", "cases": "total_cases", "positive": "positive_rate", "new": "new_cases"}
-
-    return metric_commands.get(metric)
-
 # Format and prepare user input country value for validation and query
 def format_country(country_input):
   if len(country_input) == 3:
@@ -28,7 +21,6 @@ def validate_input(input_to_check, input_type, working_dict):
       if input_type == "country":
         return country_iso_construct(input_to_check)
       elif input_type == "metric":
-        print("valid metric")
         return True
   else:
     return False
@@ -102,25 +94,20 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
 def get_metric(metric_verify):
   # FIXME: Positive is broken
   while True:
-    input_metric = input("Metric (deaths, cases, positive or 'list' to see more options): ").strip().lower()
+    input_metric = input("Metric (type 'list' to see options): ").strip().lower()
 
     try:
       # Check if user requested to see available metrics
       if input_metric == "list":
-        print("--- Available Metrics --")
-        print("cases - total case count per day")
-        print("deaths - total death count per day")
-        print("new - new cases per day")
-        print("positive - daily postitivity rate")
-      else:
-        # Call translate_metric and get formal column title from informal command
-        input_metric = translate_metric(input_metric)
-        print(input_metric)
+        print("--- Available Metrics ---")
+        subsect_full_metric_list = metric_verify[4:32]
+        for i in subsect_full_metric_list:
+          print(i)
         
         # Ensure metric exists in dataset
-        if validate_input(input_metric, "metric", metric_verify):
-          return input_metric
-        else:
-          continue
+      elif validate_input(input_metric, "metric", metric_verify):
+        return input_metric
+      else:
+        continue
     except:
       print("Your chosen metric does not appear in the dataset, please try again. Alternatively, type 'list' to see a list of available metrics.")
