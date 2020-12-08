@@ -15,6 +15,9 @@ def fetch_dataset(datafile, data_ctime):
   os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv -O data/owid-covid-data.csv")
   os.system("clear")
 
+  # Delete dataset cache file, if we hit this function then we're getting a new dataset
+  os.remove("light_dataset.py")
+
   # Check to see if the file downloaded, otherwise return backup copy.
   # (Checking for existence doesn't guarantee non-corruption)
 

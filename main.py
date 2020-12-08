@@ -4,6 +4,7 @@ import update_dataset
 import aesthetic_header
 import input_handler
 import pickle
+import os
 
 # Open dataset .csv and store each row as a dict in array
 def parse_dataset(datafile):
@@ -34,24 +35,19 @@ def parse_dataset(datafile):
     master_array.append(dataset_metrics)
     
     # Open file to store serialized list
-    pickle_serialize = open("light_datadb.cache", "wb")
+    pickle_serialize_file = open("light_datadb.cache", "wb")
 
     # Dump master_array to file
-    pickle.dump(master_array, pickle_serialize)
+    pickle.dump(master_array, pickle_serialize_file)
 
     # Close pickled file
-    pickle_serialize.close()
+    pickle_serialize_file.close()
 
     return master_array
 
 def create_subset(query_parameters):
   print("Gathering relevant collections of data...")
   """
-  Search dataset for query parameters
-  1) a) Convert map input value to key in the case of country, ex: "HND" : ISO_CODE, "Honduras": "Country" and store key
-  b) Use dict.get() for all rows matching that country/iso key, collect them into list of dicts
-  2) Convert timeframe input into list of dates backward from current day (ex: map week: [12/01/2020, 12/02/2020,...etc]) save for later user
-  3) a) convert metric to formal column title (done)
   b) Perform search of list created in #1, ex: where country/iso = USA and dateofrow = [date in timeframe list], capture numerical value for metric and store in array for output or summation
   """  
   # Build list of dicts as element where country/ISO matches
@@ -92,11 +88,19 @@ def main():
   # Ensure we are working with latest data, attempt to update if necessary
   working_file = update_dataset.data_freshness(owid_dataset)
 
-  # Parse dataset and store in main class attribute for global access [INCL ALL ROWS]
-  triple_list = parse_dataset(working_file)
+  # Either parse file from scratch or use pickled bytestream
+  if os.path.exists("light_datadb.cache"):
+    pickle_deserialize_file = open("light_datadb.cache", "rb")
+    triple_list = pickle.load(pickle_deserialize_file)
+    pickle_deserialize_file.close()
+    print("Loaded cached datafile")
+  else:
+    triple_list = parse_dataset(working_file)
 
+  # Master list including all rows as dicts
   main.data_array = triple_list[0]
-  # Build sublist to be used for input validation later
+
+  # Build sublists to be used for input validation later
   main.valid_countries = triple_list[1]
   main.valid_metrics = triple_list[2]
 
