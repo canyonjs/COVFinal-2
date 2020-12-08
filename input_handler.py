@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 # Take informal metric command and return formal column name for query
 def translate_metric(metric):
     # Defined commands informal:formal values
-    metric_commands = {"deaths": "total_deaths", "cases": "total_cases", "positivity": "positivity_rate", "new": "new_cases"}
+    metric_commands = {"deaths": "total_deaths", "cases": "total_cases", "positive": "positive_rate", "new": "new_cases"}
 
     return metric_commands.get(metric)
 
@@ -22,10 +22,14 @@ def country_iso_construct(valid_term):
     return ("location", valid_term)
 
 # Check to see if formatted country or metric input exists in dataset
-def validate_input(input_to_check, working_dict):
+def validate_input(input_to_check, input_type, working_dict):
   if len(input_to_check) >= 3:
     if input_to_check in working_dict:
-      return country_iso_construct(input_to_check)
+      if input_type == "country":
+        return country_iso_construct(input_to_check)
+      elif input_type == "metric":
+        print("valid metric")
+        return True
   else:
     return False
 
@@ -37,11 +41,11 @@ def get_country(country_verify):
     if len(input_country) < 3:
       print("Enter at least three characters")
       continue
-    elif not validate_input(input_country, country_verify):
+    elif not validate_input(input_country, "country", country_verify):
       print("Sorry,", input_country, "was not found. Please try again.")
       continue
     else:
-      return validate_input(input_country, country_verify)
+      return validate_input(input_country, "country", country_verify)
 
 def get_timeframe():
   while True:
@@ -57,7 +61,7 @@ def get_timeframe():
     elif input_timeframe == "day":
       return collect_timeframe_values(input_timeframe, 0)
     elif input_timeframe == "alltime":
-      # FIXME: Alltime is broken, not currently necessary, data set tracks sub 1yr.
+      # FIXME: Alltime is broken, not currently necessary, dataset is < 1yr.
       print("Alltime graph is currently disabled, choose another option.")
       continue
       # return collect_timeframe_values(input_timeframe, -1)
@@ -73,9 +77,8 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
   """
   timeframe_values = []
 
-  # Get current date and format string
+  # Get current date
   date_today = datetime.now()
-  current_date = date_today.strftime("%Y-%m-%d")
 
   starting_date = date_today
 
@@ -97,8 +100,9 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
   return timeframe_values
 
 def get_metric(metric_verify):
+  # FIXME: Positive is broken
   while True:
-    input_metric = input("Metric (deaths, cases, postivity or 'list' to see more options): ").strip().lower()
+    input_metric = input("Metric (deaths, cases, positive or 'list' to see more options): ").strip().lower()
 
     try:
       # Check if user requested to see available metrics
@@ -107,13 +111,14 @@ def get_metric(metric_verify):
         print("cases - total case count per day")
         print("deaths - total death count per day")
         print("new - new cases per day")
-        print("positivity - daily postitivity rate")
+        print("positive - daily postitivity rate")
       else:
         # Call translate_metric and get formal column title from informal command
         input_metric = translate_metric(input_metric)
+        print(input_metric)
         
         # Ensure metric exists in dataset
-        if validate_input(input_metric, metric_verify):
+        if validate_input(input_metric, "metric", metric_verify):
           return input_metric
         else:
           continue

@@ -76,8 +76,9 @@ def build_query():
   search_terms.append(input_handler.get_metric(main.valid_metrics))
 
   print(aesthetic_header.generate_hzrule(45))
+  print("\nCountry:", search_terms[0], "\nTimeframe:", search_terms[1], "\nMetric:", search_terms[2],"\n")
+  print(aesthetic_header.generate_hzrule(45))
 
-  print("You have selected the following parameters:", "\nCountry:", search_terms[0], "\nTimeframe:", search_terms[1], "\nMetric:", search_terms[2])
 
   return search_terms
 
