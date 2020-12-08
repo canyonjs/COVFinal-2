@@ -101,6 +101,10 @@ def get_metric(metric_verify):
       if input_metric == "list":
         print("--- Available Metrics ---")
         subsect_full_metric_list = metric_verify[4:32]
+        print("You can view descriptions and sources for each of these metrics here:")
+        print("https://github.com/owid/covid-19-data/blob/master/public/data/owid-covid-codebook.csv")
+
+        print("-------")
         for i in subsect_full_metric_list:
           print(i)
         
