@@ -46,7 +46,6 @@ def parse_dataset(datafile):
     return master_array
 
 def create_subset(query_parameters):
-  print("Gathering relevant collections of data...")
   """
   b) Perform search of list created in #1, ex: where country/iso = USA and dateofrow = [date in timeframe list], capture numerical value for metric and store in array for output or summation
   """  
@@ -67,9 +66,17 @@ def create_subset(query_parameters):
   return selected_items
 
 # TODO: Datapoint collection and graph generation
-def run_query(search_list):
+def run_query(search_list, query_term):
+  output_dict = {}
+  print("Collecting daily datapoints...")
+  for h in search_list:
+    output_dict[h.get("date")] = h.get(query_term)
+
+  
+  print(output_dict)
+  return output_dict
+
   # Perform search of selected_list using search_strings found in main
-  print("Running search for datapoints...")
 
 def generate_graph():
   # MATPLOTLIB HERE with datapoints from run_query
@@ -126,7 +133,7 @@ def main():
   main.selected_list = create_subset(search_strings)
 
   # run query with selected list
-  run_query(main.selected_list)
+  run_query(main.selected_list, search_strings[2])
 
 if __name__ == '__main__':
   main()
