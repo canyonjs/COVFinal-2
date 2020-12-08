@@ -3,58 +3,48 @@ import csv
 import update_dataset
 import aesthetic_header
 import input_handler
+import pickle
 
 # Open dataset .csv and store each row as a dict in array
 def parse_dataset(datafile):
   with open(datafile, 'r') as dataset:
     # Return data_array, and valid lists of metrics and ISO/Countries
-    master_array = []
-    # Array to hold all rows as objects as elements
+    
+    # Temporary list of dictionary elements
     temp_data_array = []
 
-    # Collect valid countries and metrics 
+    # List of countries
     dataset_countries = []
-    dataset_metrics = []
 
     reader = csv.DictReader(dataset)
     for line in reader:
       temp_line = dict(line)
       temp_data_array.append(temp_line)
-
+      # FIXME: Cache out to file, only do this once per dataset update
       if temp_line.get("location") not in dataset_countries:
         dataset_countries.append(temp_line.get("location"))
       if temp_line.get("iso_code") not in dataset_countries:
         dataset_countries.append(temp_line.get("iso_code"))
-      for o, p in temp_data_array[0].items():
-        if o not in dataset_metrics:
-          dataset_metrics.append(o)
 
+    dataset_metrics = [*temp_data_array[0]]
+
+    master_array = []
     master_array.append(temp_data_array)
     master_array.append(dataset_countries)
     master_array.append(dataset_metrics)
+    
+    # Open file to store serialized list
+    pickle_serialize = open("light_datadb.cache", "wb")
+
+    # Dump master_array to file
+    pickle.dump(master_array, pickle_serialize)
+
+    # Close pickled file
+    pickle_serialize.close()
 
     return master_array
 
-  
-def build_query():
-  # Gets user input for country, data and timeframe parameters
-  print("Please enter the country, metric and timeframe for your query.")
-  search_terms = []
-
-  search_terms.append(input_handler.get_country(main.data_array))
-  search_terms.append(input_handler.get_timeframe())
-  search_terms.append(input_handler.get_metric(main.data_array))
-
-  print(aesthetic_header.generate_hzrule(45))
-
-  print("You have selected the following parameters:", "\nCountry:", search_terms[0], "\nTimeframe:", search_terms[1], "\nMetric:", search_terms[2])
-
-  return search_terms
-
 def create_subset(query_parameters):
-  # print(query_parameters[0])
-  # print(query_parameters[1])
-  # print(query_parameters[2])
   print("Gathering relevant collections of data...")
   """
   Search dataset for query parameters
@@ -78,11 +68,23 @@ def create_subset(query_parameters):
     for requested_date in query_parameters[1]:
       if z.get("date") == requested_date:
         selected_items.append(z)
-
   return selected_items
-"""
-TODO: Create list of countries and ISO codes to be used for country/ISO input validation, too slow to search every key/val of every dict in main working_dict
-"""
+  
+def build_query():
+  # Gets user input for country, data and timeframe parameters
+  print("Please enter the country, metric and timeframe for your query.")
+  search_terms = []
+
+  search_terms.append(input_handler.get_country(main.valid_countries))
+  search_terms.append(input_handler.get_timeframe())
+  search_terms.append(input_handler.get_metric(main.valid_metrics))
+
+  print(aesthetic_header.generate_hzrule(45))
+
+  print("You have selected the following parameters:", "\nCountry:", search_terms[0], "\nTimeframe:", search_terms[1], "\nMetric:", search_terms[2])
+
+  return search_terms
+
 def main():
   # Dataset primary filename and location
   owid_dataset = "data/owid-covid-data.csv"
@@ -92,6 +94,7 @@ def main():
 
   # Parse dataset and store in main class attribute for global access [INCL ALL ROWS]
   triple_list = parse_dataset(working_file)
+
   main.data_array = triple_list[0]
   # Build sublist to be used for input validation later
   main.valid_countries = triple_list[1]

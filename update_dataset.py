@@ -15,7 +15,8 @@ def fetch_dataset(datafile, data_ctime):
   os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv -O data/owid-covid-data.csv")
   os.system("clear")
 
-  # Check to see if the file downloaded, otherwise return backup copy (likely unreliable, no exception raised on failure. Try using subprocess)
+  # Check to see if the file downloaded, otherwise return backup copy.
+  # (Checking for existence doesn't guarantee non-corruption)
 
   if os.path.exists(datafile):
     print("Success!")
@@ -28,12 +29,13 @@ def fetch_dataset(datafile, data_ctime):
     print("Dataset last modified:", data_ctime)
     return fallback_dataset
   else:
-    print("Sorry, there was an issue downloading the dataset and there does not appear to be a backup dataset to access. Try adding the dataset manually by placing the .csv file in the working folder, then relaunch the script.")
+    print("Sorry, there was an issue downloading the dataset and there does not appear to be a backup dataset to access. Try adding the dataset manually by placing the .csv file in the folder with the script, then relaunch.")
     return False
 
 def data_freshness(file_to_check):
   # Get current date and format string
   date_today = datetime.now()
+  print(date_today)
   current_date = date_today.strftime("%m/%d/%Y")
   try:
     # Check to see if dataset exists and is up to date

@@ -14,18 +14,18 @@ def format_country(country_input):
   else:
     return country_input.title()
 
+def country_iso_construct(valid_term):
+  # Construct ('iso_code': value tuple for return from validate_input()
+  if len(valid_term) == 3:
+    return ("iso_code", valid_term)
+  else:
+    return ("location", valid_term)
 
 # Check to see if formatted country or metric input exists in dataset
-def validate_input(input_to_check, input_type, working_dict):
+def validate_input(input_to_check, working_dict):
   if len(input_to_check) >= 3:
-    for data_object in working_dict:
-      for key, val in data_object.items():
-        if val == input_to_check or key == input_to_check:
-          if input_type == "Country:":
-            # In the case of country, we're going to need the key for later query
-            key_cat_input = key, input_to_check
-            return key_cat_input
-          return True
+    if input_to_check in working_dict:
+      return country_iso_construct(input_to_check)
   else:
     return False
 
@@ -37,11 +37,11 @@ def get_country(country_verify):
     if len(input_country) < 3:
       print("Enter at least three characters")
       continue
-    elif not validate_input(input_country, "Country:", country_verify):
+    elif not validate_input(input_country, country_verify):
       print("Sorry,", input_country, "was not found. Please try again.")
       continue
     else:
-      return validate_input(input_country, "Country:", country_verify)
+      return validate_input(input_country, country_verify)
 
 def get_timeframe():
   while True:
@@ -67,17 +67,19 @@ def get_timeframe():
 
 def collect_timeframe_values(selected_timeframe, num_of_days):
   # Create list of days spanning back the requested timeframe
-
+  """
+  FIXME: Timezone difficulties, Repl.it is using their server time. 
+  Only works before 7pm. EST :)
+  """
   timeframe_values = []
+
   # Get current date and format string
-  # form 2020-01-30
   date_today = datetime.now()
   current_date = date_today.strftime("%Y-%m-%d")
 
   starting_date = date_today
-  print(current_date)
 
-  # return selected_timeframe
+  # Create lists of days depending on timeframe chosen
   if num_of_days == -1:
     print("Error")
     # first_date = date(2020, 1, 1)
@@ -92,7 +94,6 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
   else:
     yesterday_date = starting_date - timedelta(days = 1)
     timeframe_values.append(yesterday_date.strftime("%Y-%m-%d"))
-  
   return timeframe_values
 
 def get_metric(metric_verify):
@@ -112,7 +113,7 @@ def get_metric(metric_verify):
         input_metric = translate_metric(input_metric)
         
         # Ensure metric exists in dataset
-        if validate_input(input_metric, "Metric:", metric_verify):
+        if validate_input(input_metric, metric_verify):
           return input_metric
         else:
           continue
