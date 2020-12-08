@@ -5,6 +5,7 @@ import aesthetic_header
 import input_handler
 import pickle
 import os
+import matplotlib.pyplot as plt
 
 # Open dataset .csv and store each row as a dict in array
 def parse_dataset(datafile):
@@ -65,25 +66,6 @@ def create_subset(query_parameters):
         selected_items.append(z)
   return selected_items
 
-# TODO: Datapoint collection and graph generation
-def run_query(search_list, query_term):
-  output_dict = {}
-  print("Collecting daily datapoints...")
-  for h in search_list:
-    output_dict[h.get("date")] = h.get(query_term)
-
-  
-  print(output_dict)
-  return output_dict
-
-  # Perform search of selected_list using search_strings found in main
-
-def generate_graph():
-  # MATPLOTLIB HERE with datapoints from run_query
-  print("Generating and outputting graph")
-# -------------------------------------------------------------------------
-
-
 def build_query():
   # Gets user input for country, data and timeframe parameters
   print("Please enter the country, metric and timeframe for your query.")
@@ -99,6 +81,29 @@ def build_query():
 
 
   return search_terms
+
+# Perform search of selected_list using search_string[metric] found in main
+def run_query(search_list, query_term):
+  output_dict = {}
+  for h in search_list:
+    output_dict[h.get("date")] = h.get(query_term)
+
+  
+  return output_dict
+
+
+def generate_graph(data_to_graph, chosen_metric, chosen_timeframe):
+  print("Generating graph output...")
+  
+  x_axis_dates = [*data_to_graph]
+  y_axis_metric = list(data_to_graph.values())
+  graph_title = chosen_metric + " over " + str(len(chosen_timeframe)) + " days."
+
+  y_pos = len(y_axis_metric)
+  x_pos = len(x_axis_dates)
+
+  
+  plt.savefig("graph.png")
 
 def main():
   # Dataset primary filename and location
@@ -133,7 +138,10 @@ def main():
   main.selected_list = create_subset(search_strings)
 
   # run query with selected list
-  run_query(main.selected_list, search_strings[2])
+  query_result = run_query(main.selected_list, search_strings[2])
+
+  # Pass query_result to graph generator
+  generate_graph(query_result, search_strings[2], search_strings[1])
 
 if __name__ == '__main__':
   main()

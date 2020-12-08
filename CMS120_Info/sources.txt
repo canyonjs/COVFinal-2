@@ -11,3 +11,4 @@ https://stackoverflow.com/questions/7274267/print-all-day-dates-between-two-date
 https://stackoverflow.com/questions/16819222/how-to-return-dictionary-keys-as-a-list-in-python
 https://docs.python.org/3/library/pickle.html#data-stream-format
 https://www.journaldev.com/15638/python-pickle-example
+https://datatofish.com/line-chart-python-matplotlib/
