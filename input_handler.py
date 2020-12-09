@@ -1,7 +1,9 @@
+# This module handles input formatting, validation and translation
 from datetime import datetime, timedelta
+import pytz
 
-# Format and prepare user input country value for validation and query
 def format_country(country_input):
+  # Format and prepare user input country value for validation and query
   if len(country_input) == 3:
     return country_input.upper()
   else:
@@ -14,8 +16,8 @@ def country_iso_construct(valid_term):
   else:
     return ("location", valid_term)
 
-# Check to see if formatted country or metric input exists in dataset
 def validate_input(input_to_check, input_type, working_dict):
+  # Check to see if formatted country or metric input exists in dataset
   if len(input_to_check) >= 3:
     if input_to_check in working_dict:
       if input_type == "country":
@@ -25,8 +27,8 @@ def validate_input(input_to_check, input_type, working_dict):
   else:
     return False
 
-# TODO: Consider consolidation
 def get_country(country_verify):
+  # Collect country/ISO code input and validate
   while True:
     input_country = format_country(input("Country/ISO CODE (ex: Honduras/HND, United States/USA): ").strip().lower())
 
@@ -40,8 +42,9 @@ def get_country(country_verify):
       return validate_input(input_country, "country", country_verify)
 
 def get_timeframe():
+  # Collect desired timeframe for graphing purposes
   while True:
-    input_timeframe = input("Timeframe (day, week, month, year or alltime): ").strip().lower()
+    input_timeframe = input("Timeframe (day, week, month or year): ").strip().lower()
     
     # TODO: Allow for custom timeframe (ex: Februrary 2020 - September 2020)
     if input_timeframe == "week":
@@ -53,7 +56,7 @@ def get_timeframe():
     elif input_timeframe == "day":
       return collect_timeframe_values(input_timeframe, 0)
     elif input_timeframe == "alltime":
-      # FIXME: Alltime is broken, not currently necessary, dataset is < 1yr.
+      # FIXME: Alltime is broken, not currently necessary, as dataset < 1yr.
       print("Alltime graph is currently disabled, choose another option.")
       continue
       # return collect_timeframe_values(input_timeframe, -1)
@@ -62,19 +65,19 @@ def get_timeframe():
       continue
 
 def collect_timeframe_values(selected_timeframe, num_of_days):
-  # Create list of days spanning back the requested timeframe
+  # Create list of days/date spanning the requested timeframe
   """
-  FIXME: Timezone difficulties, Repl.it is using their server time. 
+  FIXME: Timezone difficulties, Repl.it is using UTC server time. 
   Only works before 7pm. EST :)
   """
   timeframe_values = []
 
-  # Get current date
-  date_today = datetime.now()
-
+  # Get current date in EST
+  eastern = pytz.timezone("US/Eastern")
+  date_today = datetime.now(eastern)
+  print(date_today)
   starting_date = date_today
 
-  # Create lists of days depending on timeframe chosen
   if num_of_days == -1:
     print("Error")
     # first_date = date(2020, 1, 1)
@@ -92,7 +95,7 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
   return timeframe_values
 
 def get_metric(metric_verify):
-  # FIXME: Positive is broken
+  # Collect user input for metric, validate or provide list of options
   while True:
     input_metric = input("Metric (type 'list' to see options): ").strip().lower()
 

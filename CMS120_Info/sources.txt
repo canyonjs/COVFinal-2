@@ -12,3 +12,5 @@ https://stackoverflow.com/questions/16819222/how-to-return-dictionary-keys-as-a-
 https://docs.python.org/3/library/pickle.html#data-stream-format
 https://www.journaldev.com/15638/python-pickle-example
 https://datatofish.com/line-chart-python-matplotlib/
+https://stackoverflow.com/questions/18216526/how-use-wget-and-not-preserve-date
+https://www.kite.com/python/docs/datetime.datetime.astimezone

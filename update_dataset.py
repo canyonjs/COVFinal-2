@@ -12,7 +12,7 @@ def fetch_dataset(datafile, data_ctime):
   """
 
   os.system("echo Fetching latest dataset...")
-  os.system("wget https://covid.ourworldindata.org/data/owid-covid-data.csv -O data/owid-covid-data.csv")
+  os.system("wget --no-use-server-timestamps https://covid.ourworldindata.org/data/owid-covid-data.csv -O data/owid-covid-data.csv")
   os.system("clear")
 
   # Check to see if the file downloaded, otherwise return backup copy.
@@ -20,9 +20,12 @@ def fetch_dataset(datafile, data_ctime):
 
   if os.path.exists(datafile):
     print("Success!")
-    # Delete dataset cache file, if we hit this function then we're getting a new dataset
+    # Delete dataset cache file, if we hit this branch then we're getting a new dataset
     print("Clearing cache...")
-    os.remove("light_datadb.cache")
+    try:
+      os.remove("light_datadb.cache")
+    except FileNotFoundError:
+      print("Missing cache file")
     os.system("clear")
     # Pass new file back to data_freshness for verification & timestamp output
     data_freshness(datafile)
@@ -38,7 +41,6 @@ def fetch_dataset(datafile, data_ctime):
 def data_freshness(file_to_check):
   # Get current date and format string
   date_today = datetime.now()
-  print(date_today)
   current_date = date_today.strftime("%m/%d/%Y")
   try:
     # Check to see if dataset exists and is up to date
@@ -54,7 +56,7 @@ def data_freshness(file_to_check):
       os.replace(file_to_check, "data/old_owid-covid-data.csv")
       return fetch_dataset(file_to_check, original_dataset)
   except FileNotFoundError:
-    # If there is no dataset or fallback dataset, fetch one.
+    # If there is no dataset at all, try and fetch one.
     print("Dataset not found.")
     return fetch_dataset(file_to_check, "01/01/1970")
 

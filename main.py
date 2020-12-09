@@ -22,12 +22,13 @@ def parse_dataset(datafile):
     for line in reader:
       temp_line = dict(line)
       temp_data_array.append(temp_line)
-      # FIXME: Cache out to file, only do this once per dataset update
+      
       if temp_line.get("location") not in dataset_countries:
         dataset_countries.append(temp_line.get("location"))
       if temp_line.get("iso_code") not in dataset_countries:
         dataset_countries.append(temp_line.get("iso_code"))
-
+    
+    # Get only keys (valid metrics) from dict
     dataset_metrics = [*temp_data_array[0]]
 
     master_array = []
@@ -47,9 +48,6 @@ def parse_dataset(datafile):
     return master_array
 
 def create_subset(query_parameters):
-  """
-  b) Perform search of list created in #1, ex: where country/iso = USA and dateofrow = [date in timeframe list], capture numerical value for metric and store in array for output or summation
-  """  
   # Build list of dicts as element where country/ISO matches
   country_entries = []
 
@@ -79,7 +77,6 @@ def build_query():
   print("\nCountry:", search_terms[0], "\nTimeframe:", search_terms[1], "\nMetric:", search_terms[2],"\n")
   print(aesthetic_header.generate_hzrule(45))
 
-
   return search_terms
 
 # Perform search of selected_list using search_string[metric] found in main
@@ -94,7 +91,7 @@ def run_query(search_list, query_term):
 
 def generate_graph(data_to_graph, chosen_metric, chosen_timeframe):
   print("Generating graph output...")
-  
+  # TODO: Output
   x_axis_dates = [*data_to_graph]
   y_axis_metric = list(data_to_graph.values())
   graph_title = chosen_metric + " over " + str(len(chosen_timeframe)) + " days."
@@ -133,15 +130,17 @@ def main():
 
   # Get inputs, validate and build strings for query 
   search_strings = build_query()
+  print(search_strings)
 
   # create a subset of only those elements which match user criteria
   main.selected_list = create_subset(search_strings)
 
-  # run query with selected list
+  # Run query with selected list
   query_result = run_query(main.selected_list, search_strings[2])
 
   # Pass query_result to graph generator
   generate_graph(query_result, search_strings[2], search_strings[1])
+
 
 if __name__ == '__main__':
   main()
