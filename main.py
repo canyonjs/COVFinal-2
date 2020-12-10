@@ -6,6 +6,7 @@ import input_handler
 import pickle
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Open dataset .csv and store each row as a dict in array
 def parse_dataset(datafile):
@@ -99,18 +100,25 @@ def generate_graph(data_to_graph, chosen_metric):
   print(x_axis_dates)
   print(y_axis_metric)
 
+  # plt.bar(x_axis_dates, y_axis_metric)
+  int_y_axis= []
 
-  plt.plot(x_axis_dates, y_axis_metric)
+  for p in y_axis_metric:
+    if p == "":
+      p.replace("", "0")
+    else:
+      int_y_axis.append(int(float(p)))
+
+  plt.bar(x_axis_dates, int_y_axis)
   plt.xticks(rotation=90)
-  plt.title(graph_title)
   plt.xlabel('Dates')
   plt.ylabel(chosen_metric)
+  plt.title(graph_title)
   plt.show()
 
 
-
   
-  plt.savefig("graph.png")
+  # plt.savefig("graph.png")
 
 def main():
   # Dataset primary filename and location
@@ -131,7 +139,7 @@ def main():
   # Master list including all rows as dicts
   main.data_array = triple_list[0]
 
-  # Build sublists to be used for input validation later
+  # Lists of valid countries and metrics in dataset to speed up validation
   main.valid_countries = triple_list[1]
   main.valid_metrics = triple_list[2]
 

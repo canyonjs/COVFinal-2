@@ -44,7 +44,7 @@ def get_country(country_verify):
 def get_timeframe():
   # Collect desired timeframe for graphing purposes
   while True:
-    input_timeframe = input("Timeframe (day, week, month or year): ").strip().lower()
+    input_timeframe = input("Timeframe (week, month or year): ").strip().lower()
     
     # TODO: Allow for custom timeframe (ex: Februrary 2020 - September 2020)
     if input_timeframe == "week":
@@ -83,11 +83,11 @@ def collect_timeframe_values(selected_timeframe, num_of_days):
     delta_date = starting_date - ending_date
   if num_of_days > 1:
     for i in range(delta_date.days):
-      day = ending_date + timedelta(days = i)
+      day = ending_date + timedelta(days = i - 1)
       timeframe_values.append(day.strftime("%Y-%m-%d"))
-  else:
-    yesterday_date = starting_date - timedelta(days = 1)
-    timeframe_values.append(yesterday_date.strftime("%Y-%m-%d"))
+  # else: No need to graph single day
+  #   yesterday_date = starting_date - timedelta(days = 2)
+  #   timeframe_values.append(yesterday_date.strftime("%Y-%m-%d"))
   return timeframe_values
 
 def get_metric(metric_verify):
