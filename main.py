@@ -91,13 +91,24 @@ def run_query(search_list, query_term):
 
 def generate_graph(data_to_graph, chosen_metric, chosen_timeframe):
   print("Generating graph output...")
-  # TODO: Output
-  x_axis_dates = [*data_to_graph]
+  x_axis_dates = chosen_timeframe
   y_axis_metric = list(data_to_graph.values())
   graph_title = chosen_metric + " over " + str(len(chosen_timeframe)) + " days."
 
-  y_pos = len(y_axis_metric)
-  x_pos = len(x_axis_dates)
+  # DEBUG: Remove before PROD
+  print(data_to_graph)
+  print(x_axis_dates)
+  print(y_axis_metric)
+
+
+  plt.plot(x_axis_dates, y_axis_metric)
+  plt.xticks(rotation=90)
+  plt.title(graph_title)
+  plt.xlabel('Dates')
+  plt.ylabel(chosen_metric)
+  plt.show()
+
+
 
   
   plt.savefig("graph.png")
@@ -130,7 +141,6 @@ def main():
 
   # Get inputs, validate and build strings for query 
   search_strings = build_query()
-  print(search_strings)
 
   # create a subset of only those elements which match user criteria
   main.selected_list = create_subset(search_strings)

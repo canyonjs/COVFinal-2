@@ -66,16 +66,12 @@ def get_timeframe():
 
 def collect_timeframe_values(selected_timeframe, num_of_days):
   # Create list of days/date spanning the requested timeframe
-  """
-  FIXME: Timezone difficulties, Repl.it is using UTC server time. 
-  Only works before 7pm. EST :)
-  """
   timeframe_values = []
 
   # Get current date in EST
   eastern = pytz.timezone("US/Eastern")
   date_today = datetime.now(eastern)
-  print(date_today)
+
   starting_date = date_today
 
   if num_of_days == -1:
@@ -115,6 +111,7 @@ def get_metric(metric_verify):
       elif validate_input(input_metric, "metric", metric_verify):
         return input_metric
       else:
+        print("Invalid metric, please try again or type 'list' to see all options.")
         continue
     except:
       print("Your chosen metric does not appear in the dataset, please try again. Alternatively, type 'list' to see a list of available metrics.")
