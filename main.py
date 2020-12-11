@@ -1,4 +1,4 @@
-# Import Modules
+# Import
 import csv
 import update_dataset
 import aesthetic_header
@@ -6,7 +6,6 @@ import input_handler
 import pickle
 import os
 import matplotlib.pyplot as plt
-import numpy as np
 
 # Open dataset .csv and store each row as a dict in array
 def parse_dataset(datafile):
@@ -84,7 +83,11 @@ def run_query(search_list, query_term):
   # Search narrowed list using search_string[metric] to collect dates and values
   output_dict = {}
   for h in search_list:
-    output_dict[h.get("date")] = h.get(query_term)
+    if h.get(query_term) == "":
+      zero_out = "0"
+      output_dict[h.get("date")] = zero_out
+    else:
+      output_dict[h.get("date")] = h.get(query_term)
 
   return output_dict
 
@@ -93,32 +96,41 @@ def generate_graph(data_to_graph, chosen_metric):
   print("Generating graph output...")
   x_axis_dates = [*data_to_graph]
   y_axis_metric = list(data_to_graph.values())
+  chosen_metric = chosen_metric.replace("_", " ").title()
   graph_title = chosen_metric + " over " + str(len(x_axis_dates)) + " days."
-
-  # DEBUG: Remove before PROD
-  print(data_to_graph)
-  print(x_axis_dates)
-  print(y_axis_metric)
-
-  # plt.bar(x_axis_dates, y_axis_metric)
-  int_y_axis= []
-
-  for p in y_axis_metric:
-    if p == "":
-      p.replace("", "0")
-    else:
-      int_y_axis.append(int(float(p)))
-
-  plt.bar(x_axis_dates, int_y_axis)
-  plt.xticks(rotation=90)
-  plt.xlabel('Dates')
-  plt.ylabel(chosen_metric)
-  plt.title(graph_title)
-  plt.show()
-
-
   
-  # plt.savefig("graph.png")
+  int_y_axis= []
+  # Convert y axis data from str to ints
+  for p in y_axis_metric:
+    int_y_axis.append(int(float(p)))
+
+
+
+  # PLT START
+  plt.figure(figsize=(12, 8))
+
+  ax = plt.subplot(111)
+  ax.spines["top"].set_visible(False)
+  ax.spines["right"].set_visible(False)
+  ax.get_xaxis().tick_bottom()
+  ax.get_yaxis().tick_left()
+  # ax.set_facecolor("black")
+  
+  plt.xticks(rotation=90, fontsize=14)
+  plt.yticks(fontsize=14)
+  
+  plt.xlabel('Dates', fontsize=16)
+  plt.ylabel(chosen_metric, fontsize=16)
+
+  plt.title(graph_title, fontsize=22)
+  plt.grid(zorder=0)
+  plt.bar(x_axis_dates, int_y_axis, color="#2e5090", edgecolor="#2e906e", zorder=3)
+
+  plt.savefig("graph.png", bbox_inches="tight")
+  plt.show()
+  
+  # TODO: Save in output folder and using metric, timeframe and timestamp
+  # TODO: Call quit function, prompt for another query
 
 def main():
   # Dataset primary filename and location
