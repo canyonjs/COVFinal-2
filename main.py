@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 def parse_dataset(datafile):
   with open(datafile, 'r') as dataset:
     # Return data_array, and valid lists of metrics and ISO/Countries
-    
     # Temporary list of dictionary elements
     temp_data_array = []
 
