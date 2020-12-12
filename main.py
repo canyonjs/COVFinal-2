@@ -53,12 +53,14 @@ def build_query():
   print("Please enter the country, metric and timeframe for your query.")
   search_terms = []
 
+
   search_terms.append(input_handler.get_country(main.valid_countries))
-  search_terms.append(input_handler.get_timeframe())
+  user_submitted_timeframe = input_handler.get_timeframe()
+  search_terms.append(user_submitted_timeframe[0])
   search_terms.append(input_handler.get_metric(main.valid_metrics))
 
   print(aesthetic_header.generate_hzrule(45))
-  print("\nCountry:", search_terms[0], "\nTimeframe:", search_terms[1], "\nMetric:", search_terms[2],"\n")
+  print("\nCountry:", search_terms[0], "\nTimeframe:", user_submitted_timeframe[1], "\nMetric:", search_terms[2],"\n")
   print(aesthetic_header.generate_hzrule(45))
 
   return search_terms
@@ -90,14 +92,21 @@ def run_query(search_list, metric_term):
     else:
       output_dict[h.get("date")] = h.get(metric_term)
 
-  # TODO: Check to ensure dataset is not empty
-  print(output_dict)
+  # Ensure value set is not 0s
   for list_val in list(output_dict.values()):
     if list_val != "0":
       return output_dict
   
   return False
+
+def ending_prompt():
+  last_input = input("Would you like to run another query? (y/N): ") 
   
+  if last_input == "y" or last_input == "yes":
+    main()
+  else:
+    print("Goodbye! Wear a mask, don't be a statistic.")
+    quit()
 
 def generate_graph(data_to_graph, chosen_metric):
   print("Generating graph output...")
@@ -121,7 +130,6 @@ def generate_graph(data_to_graph, chosen_metric):
   ax.spines["right"].set_visible(False)
   ax.get_xaxis().tick_bottom()
   ax.get_yaxis().tick_left()
-  # ax.set_facecolor("black")
   
   plt.xticks(rotation=90, fontsize=14)
   plt.yticks(fontsize=14)
@@ -137,12 +145,18 @@ def generate_graph(data_to_graph, chosen_metric):
   date_today_string = date_today.strftime("%m-%d-%Y, %H:%M:%S")
   save_filename = "output_graphs/" + date_today_string + " - " + chosen_metric + ".png" 
 
-  plt.savefig(save_filename, bbox_inches="tight")
+  try:
+    plt.savefig(save_filename, bbox_inches="tight")
+    print("Graph generated successfully. Check folder output_graphs for file.")
+  except:
+    print("Sorry, something went wrong, please relaunch the program and try again.")
+    quit()
+
+  ending_prompt()
   
-  # TODO: Save in output folder and using metric, timeframe and timestamp
-  # TODO: Call quit function, prompt for another query
 
 def main():
+  os.system("clear")
   # Dataset primary filename and location
   owid_dataset = "data/owid-covid-data.csv"
 
@@ -180,7 +194,6 @@ def main():
   if not query_result:
     print("Sorry, I don't have data for your requested timeframe and metric.")
     input("Press enter to start over...")
-    os.system("clear")
     main()
 
   # Pass query_result dict to graph output along with chosen metric string for label

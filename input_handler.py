@@ -44,17 +44,20 @@ def get_country(country_verify):
 def get_timeframe():
   # Collect desired timeframe for graphing purposes
   while True:
-    input_timeframe = input("Timeframe (week, month or year): ").strip().lower()
+    input_timeframe = input("Timeframe (week or month): ").strip().lower()
     
     # TODO: Allow for custom timeframe (ex: Februrary 2020 - September 2020)
     if input_timeframe == "week":
-      return collect_timeframe_values(input_timeframe, 7)
+      return collect_timeframe_values(input_timeframe, 7), input_timeframe
     elif input_timeframe == "month":
-      return collect_timeframe_values(input_timeframe, 30)
+      return collect_timeframe_values(input_timeframe, 30), input_timeframe
+      # FIXME: Year x axis label is broken, disabled for now
     elif input_timeframe == "year":
-      return collect_timeframe_values(input_timeframe, 365)
+      # return collect_timeframe_values(input_timeframe, 365), input_timeframe
+      print("Year graph is currently disabled, choose another option.")
+      continue
     elif input_timeframe == "day":
-      return collect_timeframe_values(input_timeframe, 0)
+      return collect_timeframe_values(input_timeframe, 0), input_timeframe
     elif input_timeframe == "alltime":
       # FIXME: Alltime is broken, not currently necessary, as dataset < 1yr.
       print("Alltime graph is currently disabled, choose another option.")
